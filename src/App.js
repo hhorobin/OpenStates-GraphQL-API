@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import './App.css'
+import { useQuery } from '@apollo/react-hooks'
+import gql from "graphql-tag"
+
+const GET_INFO = gql`
+{
+    people(first: 10) {
+        edges {
+            node {
+                name
+            }
+        }
+    }
+}
+`
 
 function App() {
+  const { data, loading, error } = useQuery(GET_INFO)
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error</p>
+
+  const names = data.people.edges.map((person) => {
+    return person.node.name
+  })
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  <>
+    <div className="container">
+      {names}
     </div>
-  );
+  </>
+);
 }
 
 export default App;
